@@ -30,7 +30,7 @@ public class GameService {
 
 
     //Save Game
-    public Game saveGame(GameDTO dto){
+    public GameDTO saveGame(GameDTO dto){
 
         Game game=new Game();
         game.setPlayer1(dto.getPlayer1());
@@ -49,7 +49,8 @@ public class GameService {
 
         game.setRounds(rounds);
 
-        return gameRepository.save(game);
+        Game savedGame = gameRepository.save(game);
+        return mapToDTO(savedGame);
     }
 
 
@@ -70,5 +71,24 @@ public class GameService {
                     roundDTOs
             );
         }).collect(Collectors.toList());
+    }
+
+    private GameDTO mapToDTO(Game game) {
+
+        List<RoundDTO> rounds = game.getRounds().stream().map(r ->
+                new RoundDTO(
+                        r.getRoundNumber(),
+                        r.getPlayer1Choice(),
+                        r.getPlayer2Choice(),
+                        r.getWinner()
+                )
+        ).toList();
+
+        return new GameDTO(
+                game.getPlayer1(),
+                game.getPlayer2(),
+                game.getWinner(),
+                rounds
+        );
     }
 }

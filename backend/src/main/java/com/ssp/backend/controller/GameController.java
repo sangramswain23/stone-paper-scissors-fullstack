@@ -1,5 +1,6 @@
 package com.ssp.backend.controller;
 
+import com.ssp.backend.dto.ApiResponse;
 import com.ssp.backend.dto.GameDTO;
 import com.ssp.backend.entity.Game;
 import com.ssp.backend.service.GameService;
@@ -19,12 +20,17 @@ public class GameController {
 
 
     @PostMapping("/save")
-    public Game saveGame(@Valid @RequestBody GameDTO dto){
-        return gameService.saveGame(dto);
+    public ApiResponse<GameDTO> saveGame(@Valid @RequestBody GameDTO dto){
+        GameDTO game=gameService.saveGame(dto);
+        return new ApiResponse<>(
+                "success", "Game saved successfully", game
+        );
     }
 
     @GetMapping("/all")
-    public List<GameDTO> getAllGames(){
-        return gameService.getAllGames();
+    public ApiResponse<List<GameDTO>> getAllGames(){
+        return new ApiResponse<>(
+                "success", "game fetched successfully", gameService.getAllGames()
+        );
     }
 }

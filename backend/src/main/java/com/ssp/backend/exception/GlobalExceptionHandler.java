@@ -1,5 +1,6 @@
 package com.ssp.backend.exception;
 
+import com.ssp.backend.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,20 +16,24 @@ public class GlobalExceptionHandler {
     //Validation Errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationErrors(MethodArgumentNotValidException ex){
+    public ErrorResponse handleValidationErrors(MethodArgumentNotValidException ex){
 
         Map<String, String> errors=new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(error->
                 errors.put(error.getField(),error.getDefaultMessage()));
-        return errors;
+        return new ErrorResponse(
+                "error", "validation failed", errors
+        );
     }
 
 
     //Generic Errors
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleGenericException(Exception ex){
-        return ex.getMessage();
+    public ErrorResponse handleGenericException(Exception ex){
+        return new ErrorResponse(
+                "error", ex.getMessage(), null
+        );
     }
 }
