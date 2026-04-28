@@ -3,6 +3,7 @@ package com.ssp.backend.controller;
 import com.ssp.backend.dto.GameDTO;
 import com.ssp.backend.entity.Game;
 import com.ssp.backend.service.GameService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class GameController {
 
 
     @PostMapping("/save")
-    public Game saveGame(@RequestBody GameDTO dto){
+    public Game saveGame(@Valid @RequestBody GameDTO dto){
         return gameService.saveGame(dto);
     }
 
