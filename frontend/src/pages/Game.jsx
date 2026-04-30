@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API from "../services/api";
 
 function Game() {
 
@@ -31,6 +32,7 @@ function Game() {
     return "Player2";
   };
 
+
   // 🔹 Play Round
   const playRound = () => {
 
@@ -59,6 +61,27 @@ function Game() {
 
     setRoundNumber(roundNumber + 1);
   };
+
+  const saveGame = async () => {
+
+  const finalWinner =
+    score.p1 > score.p2 ? player1 :
+    score.p2 > score.p1 ? player2 : "Tie";
+
+  try {
+    await API.post("/game/save", {
+      player1,
+      player2,
+      winner: finalWinner,
+      rounds
+    });
+
+    alert("Game saved!");
+  } catch (error) {
+    console.error(error);
+    alert("Error saving game");
+  }
+};
 
   return (
     <div>
@@ -120,6 +143,12 @@ function Game() {
           Round {r.roundNumber}: {r.player1Choice} vs {r.player2Choice} → {r.winner}
         </p>
       ))}
+
+      {roundNumber > 6 && (
+  <button onClick={saveGame}>
+    Save Game
+  </button>
+)}
 
     </div>
   );
