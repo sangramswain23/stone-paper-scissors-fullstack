@@ -11,15 +11,14 @@ function Game() {
   const [p1Choice, setP1Choice] = useState("");
   const [p2Choice, setP2Choice] = useState("");
 
-  // 🔹 Options
   const options = ["Stone", "Paper", "Scissors"];
 
-  // 🔹 Round + Score
+  // 🔹 Game state
   const [roundNumber, setRoundNumber] = useState(1);
   const [rounds, setRounds] = useState([]);
   const [score, setScore] = useState({ p1: 0, p2: 0 });
 
-  // 🔹 Winner Logic
+  // 🔹 Winner logic
   const getWinner = (p1, p2) => {
     if (p1 === p2) return "Tie";
 
@@ -32,8 +31,7 @@ function Game() {
     return "Player2";
   };
 
-
-  // 🔹 Play Round
+  // 🔹 Play round
   const playRound = () => {
 
     if (!p1Choice || !p2Choice) {
@@ -58,84 +56,109 @@ function Game() {
     };
 
     setRounds([...rounds, newRound]);
-
     setRoundNumber(roundNumber + 1);
   };
 
+  // 🔹 Save game
   const saveGame = async () => {
 
-  const finalWinner =
-    score.p1 > score.p2 ? player1 :
-    score.p2 > score.p1 ? player2 : "Tie";
+    const finalWinner =
+      score.p1 > score.p2 ? player1 :
+      score.p2 > score.p1 ? player2 : "Tie";
 
-  try {
-    await API.post("/game/save", {
-      player1,
-      player2,
-      winner: finalWinner,
-      rounds
-    });
+    try {
+      await API.post("/game/save", {
+        player1,
+        player2,
+        winner: finalWinner,
+        rounds
+      });
 
-    alert("Game saved!");
-  } catch (error) {
-    console.error(error);
-    alert("Error saving game");
-  }
-};
+      alert("Game saved successfully!");
+
+      // Reset game
+      setRounds([]);
+      setScore({ p1: 0, p2: 0 });
+      setRoundNumber(1);
+      setP1Choice("");
+      setP2Choice("");
+
+    } catch (error) {
+      console.error(error);
+      alert("Error saving game");
+    }
+  };
 
   return (
-    <div>
+    <div style={{
+      maxWidth: "600px",
+      margin: "auto",
+      textAlign: "center"
+    }}>
+
       <h2>Stone Paper Scissors</h2>
 
       {/* Player Inputs */}
       <input
         placeholder="Player 1"
+        value={player1}
         onChange={(e) => setPlayer1(e.target.value)}
+        style={{ margin: "5px", padding: "5px" }}
       />
 
       <input
         placeholder="Player 2"
+        value={player2}
         onChange={(e) => setPlayer2(e.target.value)}
+        style={{ margin: "5px", padding: "5px" }}
       />
 
-      <p>Player1: {player1}</p>
-      <p>Player2: {player2}</p>
+      <p>{player1} vs {player2}</p>
 
       <hr />
 
       {/* Choices */}
       <h3>Select Choices</h3>
 
-      <select onChange={(e) => setP1Choice(e.target.value)}>
+      <select
+        value={p1Choice}
+        onChange={(e) => setP1Choice(e.target.value)}
+        style={{ margin: "5px", padding: "5px" }}
+      >
         <option value="">Select</option>
         {options.map((o) => (
           <option key={o}>{o}</option>
         ))}
       </select>
 
-      <select onChange={(e) => setP2Choice(e.target.value)}>
+      <select
+        value={p2Choice}
+        onChange={(e) => setP2Choice(e.target.value)}
+        style={{ margin: "5px", padding: "5px" }}
+      >
         <option value="">Select</option>
         {options.map((o) => (
           <option key={o}>{o}</option>
         ))}
       </select>
-
-      <p>P1 Choice: {p1Choice}</p>
-      <p>P2 Choice: {p2Choice}</p>
 
       <hr />
 
-      {/* Button */}
-      <button onClick={playRound} disabled={roundNumber > 6}>
+      {/* Play Button */}
+      <button
+        onClick={playRound}
+        disabled={roundNumber > 6}
+        style={{ padding: "10px", marginTop: "10px" }}
+      >
         Play Round
       </button>
 
-      <h3>Round: {roundNumber}</h3>
+      <h3>Round: {roundNumber <= 6 ? roundNumber : 6}</h3>
       <h3>Score: {score.p1} - {score.p2}</h3>
 
       <hr />
 
-      {/* Round History */}
+      {/* Rounds */}
       <h3>Rounds</h3>
 
       {rounds.map((r) => (
@@ -144,11 +167,17 @@ function Game() {
         </p>
       ))}
 
+      <hr />
+
+      {/* Save */}
       {roundNumber > 6 && (
-  <button onClick={saveGame}>
-    Save Game
-  </button>
-)}
+        <button
+          onClick={saveGame}
+          style={{ padding: "10px", marginTop: "10px" }}
+        >
+          Save Game
+        </button>
+      )}
 
     </div>
   );
