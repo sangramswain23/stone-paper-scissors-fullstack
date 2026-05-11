@@ -36,7 +36,7 @@ The application supports 6-round gameplay, score tracking, winner declaration, a
 
 ### Database
 
-* H2 / PostgreSQL
+* H2 
 
 ---
 
@@ -89,7 +89,8 @@ http://localhost:8080/api
 
 ## Screenshots
 
-later
+![Game Page](screenshots/game-page.png)
+![Game Page](screenshots/history-page.png)
 
 ---
 
